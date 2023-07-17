@@ -1,0 +1,21 @@
+#grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 600px;
+  }
+  
+  #grid div {
+    border: 1px solid #333;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #grid input[type='text'] {
+    margin-bottom: 10px;
+  }
+  
