@@ -1,21 +1,109 @@
+body {
+  background-color: #f2f2f2;
+}
+
+
 #grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     width: 100%;
     max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   #grid div {
-    border: 1px solid #333;
     padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
   }
+
+/* make an element called card that is part of grid */
+  #grid .card {
+    grid-column: 1 / 6;
+    grid-row: 1 / 6;
+    display: flex;
+    width: 180px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffcc;
+    margin-bottom: 10px;
+    /* add a drop shadow and a border */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid #ccc;
+    /* make them rounded rectangles */
+    border-radius: 5px;
+  }
   
+  #grid .card-top {
+    /* align elements side by side */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
   #grid input[type='text'] {
     margin-bottom: 10px;
+    text-align: center;
+    /* make the text box a bit rounded */
+    border-radius: 5px;
+    /* make the text box a bit taller */
+    height: 20px;
+    border: 1px solid #999999;
   }
+
+  #grid input[type='checkbox'] {
+    /* make it a large square that changes color when clicked */
+    width: 30px;
+    height: 30px;
+    background-color: #eee;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  /* make a button class that is blue, as wide as the grid and a bit rounded */
+  #generateClue {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    /* center the text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* make the button clickable */
+    cursor: pointer;
+    /* make the button dim slightly on click */
+    transition: 0.2s;
+  }
+
+  .flipped-text {
+    /* flip the text upside down, make it small, and italicized, and shift it right a little */
+    transform: rotate(180deg);
+    font-style: italic;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    border-top: solid 1px;
+    color: rgb(149, 149, 149);
+  }
+
   

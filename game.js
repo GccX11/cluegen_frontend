@@ -15,17 +15,23 @@ $( document ).ready(function() {
   }
   
   // Create grid elements
+  var flipped_texts = [];
   for (var i = 0; i < 5; i++) {
     var $row = $("<div/>");
+    var flipped_texts_row = [];
     for (var j = 0; j < 5; j++) {
-      var $cell = $("<div/>");
+      var $card = $("<div/>");
+      var $flipped_text = $("<span/>");
       var $input = $("<input type='text' value='"+grid[i][j].word+"'/>");
       var $checkbox = $("<input type='checkbox'/>");
+      flipped_texts_row.push($flipped_text);
   
       // Update model when input changes
       $input.on("input", (function(i, j) {
         return function() {
           grid[i][j].word = $(this).val();
+          flipped_texts[i][j].text(grid[i][j].word);
+          console.log(grid[i][j].word);
         };
       })(i, j));
   
@@ -36,16 +42,32 @@ $( document ).ready(function() {
         };
       })(i, j));
   
-      $cell.append($input, $checkbox);
-      $row.append($cell);
+      // make a view with the input and checkbox side by side
+      $card_top = $("<div/>");
+      $card_top.append($flipped_text);
+      $card_top.append($checkbox);
+      $card_top.addClass("card-top");
+      $card.append($card_top, $input);
+      $card.addClass("card");
+      $flipped_text.text(grid[i][j].word);
+      $flipped_text.addClass("flipped-text");
+      $row.append($card);
     }
     $("#grid").append($row);
+    flipped_texts.push(flipped_texts_row);
   }
 
   // Handle Generate Clue button
   $("#generateClue").on("click", function() {
     // Convert grid to JSON
     var gridJson = JSON.stringify(grid);
+
+    // dim the button slighlty on click and undim after AJAX request
+    $(this).css("opacity", "0.5");
+    // disable button until AJAX request is complete
+    $(this).prop("disabled", true);
+    // change cursor to indicate that button is disabled
+    $("#generateClue").css("cursor", "not-allowed");
   
     // Make AJAX request
     $.ajax({
@@ -56,10 +78,16 @@ $( document ).ready(function() {
       success: function(data) {
         // Handle successful response
         console.log("Response:", data);
+        $("#generateClue").css("opacity", "1");
+        $("#generateClue").prop("disabled", false);
+        $("#generateClue").css("cursor", "pointer");
       },
       error: function(jqXHR, textStatus, errorThrown) {
         // Handle error
         console.log("Error:", errorThrown);
+        $("#generateClue").css("opacity", "1");
+        $("#generateClue").prop("disabled", false);
+        $("#generateClue").css("cursor", "pointer");
       }
     });
   });
