@@ -4,7 +4,7 @@ const words = ["Actor", "Gold", "Painting", "Advertisement", "Grass", "Parrot", 
 var grid = [];
 
 // colors
-const YELLOW = "rgb(255, 244, 160)";
+const YELLOW = "rgb(110, 103, 23)";
 const RED = "rgb(167, 51, 31)";
 const BLUE = "rgb(31, 31, 167)";
 const BLACK = "rgb(40, 40, 40)";
@@ -13,91 +13,84 @@ const NUM_ROWS = 5;
 const NUM_COLS = 5;
 
 $(document).ready(function () {
-  for (var i = 0; i < NUM_ROWS; i++) {
-    var row = [];
-    for (var j = 0; j < NUM_COLS; j++) {
+  for (var i = 0; i < NUM_ROWS*NUM_COLS; i++) {
       const random = Math.floor(Math.random() * words.length);
       console.log(random, words[random]);
-      row.push({
+      grid.push({
         word: words[random],
         owner: 'yellow', // default to yellow
         revealed: false,
         card: null
       });
     }
-    grid.push(row);
-  }
 
   // Create grid elements
-  for (var i = 0; i < NUM_ROWS; i++) {
+  for (var i = 0; i < NUM_ROWS*NUM_COLS; i++) {
     var $row = $("<div/>");
-    for (var j = 0; j < NUM_COLS; j++) {
-      var $card = $("<div/>");
-      var $input = $("<input type='text' value='" + grid[i][j].word + "'/>");
+    var $card = $("<div/>");
+    var $input = $("<input type='text' value='" + grid[i].word + "'/>");
 
-      // Update model when input changes
-      $input.on("input", (function (i, j) {
-        return function () {
-          grid[i][j].word = $(this).val();
-        };
-      })(i, j));
+    // Update model when input changes
+    $input.on("input", (function (i) {
+      return function () {
+        grid[i].word = $(this).val();
+      };
+    })(i));
 
-      // change the card background when the card is clicked
-      $card.on("tap", (function (i, j) {
-        return function () {
-          console.log(grid[i][j].owner);
-          if (!grid[i][j].revealed) {
-            // cylce through the owners and change the color
-            // yelllow --> red --> blue --> black --> yellow
-            if (grid[i][j].owner == 'yellow') {
-              grid[i][j].owner = 'red';
-              $(this).css("background-color", RED);
-            } else if (grid[i][j].owner == 'red') {
-              grid[i][j].owner = 'blue';
-              $(this).css("background-color", BLUE);
-            } else if (grid[i][j].owner == 'blue') {
-              grid[i][j].owner = 'black';
-              $(this).css("background-color", BLACK);
-            } else if (grid[i][j].owner == 'black') {
-              grid[i][j].owner = 'yellow';
-              $(this).css("background-color", YELLOW);
-            }
+    // change the card background when the card is clicked
+    $card.on("tap", (function (i) {
+      return function () {
+        console.log(grid[i].owner);
+        if (!grid[i].revealed) {
+          // cylce through the owners and change the color
+          // yelllow --> red --> blue --> black --> yellow
+          if (grid[i].owner == 'yellow') {
+            grid[i].owner = 'red';
+            $(this).css("background-color", RED);
+          } else if (grid[i].owner == 'red') {
+            grid[i].owner = 'blue';
+            $(this).css("background-color", BLUE);
+          } else if (grid[i].owner == 'blue') {
+            grid[i].owner = 'black';
+            $(this).css("background-color", BLACK);
+          } else if (grid[i].owner == 'black') {
+            grid[i].owner = 'yellow';
+            $(this).css("background-color", YELLOW);
           }
-        };
-      })(i, j));
+        }
+      };
+    })(i));
 
-      $card.on("press", (function (i, j) {
-        return function () {
-          if (!grid[i][j].revealed) {
-            $transparent = $("<div/>");
-            $transparent.addClass("transp");
-            // set the div's background color to the card's background color
-            $transparent.css("background-color", grid[i][j].card.css("background-color"));
-            // add some transparency to the div
-            $transparent.css("opacity", "0.85");
-            grid[i][j].revealed = true;
-            // hide the elements on the card
-            grid[i][j].card.append($transparent);
-          } else {
-            $transparent = grid[i][j].card.find(".transp");
-            // select the div with the class transp and remove it
-            grid[i][j].revealed = false;
-            // unhide the elements on the card
-            $transparent.remove();
-          }
-        };
-      })(i, j));
+    $card.on("press", (function (i) {
+      return function () {
+        if (!grid[i].revealed) {
+          $transparent = $("<div/>");
+          $transparent.addClass("transp");
+          // set the div's background color to the card's background color
+          $transparent.css("background-color", grid[i].card.css("background-color"));
+          // add some transparency to the div
+          $transparent.css("opacity", "0.85");
+          grid[i].revealed = true;
+          // hide the elements on the card
+          grid[i].card.append($transparent);
+        } else {
+          $transparent = grid[i].card.find(".transp");
+          // select the div with the class transp and remove it
+          grid[i].revealed = false;
+          // unhide the elements on the card
+          $transparent.remove();
+        }
+      };
+    })(i));
 
 
-      // make a view with the input and checkbox side by side
-      $card.append($input);
-      $card.addClass("card");
-      $row.append($card);
+    // make a view with the input and checkbox side by side
+    $card.append($input);
+    $card.addClass("card");
+    $("#grid").append($card);
 
-      // add the card to the grid
-      grid[i][j].card = $card;
-    }
-    $("#grid").append($row);
+    // add the card to the grid
+    grid[i].card = $card;
   }
 
 

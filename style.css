@@ -1,89 +1,103 @@
+/* needed for modern web dev */
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: #f2f2f2;
 }
 
-
 #grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    width: 100%;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  #grid div {
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+}
 
-/* make an element called card that is part of grid */
+#grid .card {
+  padding: 10px;
+  position: relative; /* necessary for the transparent div */
+  background-color: rgb(110, 103, 23);
+  margin-bottom: 15px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  flex-grow: 1;
+}
+
+@media (max-width: 599px) {
   #grid .card {
-    position: relative;
-    grid-column: 1 / 6;
-    grid-row: 1 / 6;
-    display: flex;
-    width: 150px;
-    height: 50px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: rgb(255, 244, 160);
-    margin-bottom: 15px;
-    /* add a drop shadow and a border */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    border: 1px solid #ccc;
-    /* make them rounded rectangles */
-    border-radius: 5px;
+    flex-basis: 100%; /* For less than 400px screens */
   }
+}
 
-  #grid input[type='text'] {
-    text-align: center;
-    /* make the text box a bit rounded */
-    border-radius: 5px;
-    /* make the text box a bit taller */
-    height: 20px;
-    border: 1px solid #999999;
+@media (min-width: 600px) and (max-width: 899px) {
+  #grid .card {
+    flex-basis: calc(50% - 10px); /* For 600px to 900px screens */
   }
-  
-  /* make a button class that is blue, as wide as the grid and a bit rounded */
-  #generateClue {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
+}
+
+@media (min-width: 900px) {
+  #grid .card {
+    flex-basis: calc(20% - 10px); /* For greater than 900px screens */
+  }
+}
+
+#grid input[type='text'] {
+  text-align: center;
+  border-radius: 5px;
+  height: 15px;
+  border: 1px solid #999999;
+  color: #FFFFFF;
+  font-size: 3vw;
+  width: 100%;
+  text-align: center;
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+@media (max-width: 500px) {
+  #grid input[type="text"] {
     font-size: 16px;
-    border-radius: 5px;
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 10px;
-    margin-left: auto;
-    margin-right: auto;
-    /* center the text */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* make the button clickable */
-    cursor: pointer;
-    /* make the button dim slightly on click */
-    transition: 0.2s;
   }
+}
 
-  .transp {
-    /* make the div fill up the parent */
-    position: absolute;
-    display: flex;
-    top: 0;
-    left: 0;
-    width: 150px;
-    height: 50px;
+@media (min-width: 600px) {
+  #grid input[type="text"] {
+    font-size: 20px;
+  }
+}
+
+#generateClue {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.transp {
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
