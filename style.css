@@ -6,7 +6,6 @@ body {
 #grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
     width: 100%;
     max-width: 600px;
     margin-left: auto;
@@ -26,48 +25,31 @@ body {
 
 /* make an element called card that is part of grid */
   #grid .card {
+    position: relative;
     grid-column: 1 / 6;
     grid-row: 1 / 6;
     display: flex;
-    width: 180px;
+    width: 150px;
+    height: 50px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #ffffcc;
-    margin-bottom: 10px;
+    background-color: rgb(255, 244, 160);
+    margin-bottom: 15px;
     /* add a drop shadow and a border */
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     border: 1px solid #ccc;
     /* make them rounded rectangles */
     border-radius: 5px;
   }
-  
-  #grid .card-top {
-    /* align elements side by side */
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-  }
 
   #grid input[type='text'] {
-    margin-bottom: 10px;
     text-align: center;
     /* make the text box a bit rounded */
     border-radius: 5px;
     /* make the text box a bit taller */
     height: 20px;
     border: 1px solid #999999;
-  }
-
-  #grid input[type='checkbox'] {
-    /* make it a large square that changes color when clicked */
-    width: 30px;
-    height: 30px;
-    background-color: #eee;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.2s;
   }
   
   /* make a button class that is blue, as wide as the grid and a bit rounded */
@@ -96,14 +78,12 @@ body {
     transition: 0.2s;
   }
 
-  .flipped-text {
-    /* flip the text upside down, make it small, and italicized, and shift it right a little */
-    transform: rotate(180deg);
-    font-style: italic;
-    margin-right: 20px;
-    margin-bottom: 10px;
-    border-top: solid 1px;
-    color: rgb(149, 149, 149);
-  }
-
-  
+  .transp {
+    /* make the div fill up the parent */
+    position: absolute;
+    display: flex;
+    top: 0;
+    left: 0;
+    width: 150px;
+    height: 50px;
+}

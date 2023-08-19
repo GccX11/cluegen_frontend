@@ -3,62 +3,106 @@ const words = ["Actor", "Gold", "Painting", "Advertisement", "Grass", "Parrot", 
 // Initialize grid
 var grid = [];
 
-$( document ).ready(function() {
-  for (var i = 0; i < 5; i++) {
+// colors
+const YELLOW = "rgb(255, 244, 160)";
+const RED = "rgb(167, 51, 31)";
+const BLUE = "rgb(31, 31, 167)";
+const BLACK = "rgb(40, 40, 40)";
+
+const NUM_ROWS = 5;
+const NUM_COLS = 5;
+
+$(document).ready(function () {
+  for (var i = 0; i < NUM_ROWS; i++) {
     var row = [];
-    for (var j = 0; j < 5; j++) {
+    for (var j = 0; j < NUM_COLS; j++) {
       const random = Math.floor(Math.random() * words.length);
       console.log(random, words[random]);
-      row.push({ word: words[random], revealed: false });
+      row.push({
+        word: words[random],
+        owner: 'yellow', // default to yellow
+        revealed: false,
+        card: null
+      });
     }
     grid.push(row);
   }
-  
+
   // Create grid elements
-  var flipped_texts = [];
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < NUM_ROWS; i++) {
     var $row = $("<div/>");
-    var flipped_texts_row = [];
-    for (var j = 0; j < 5; j++) {
+    for (var j = 0; j < NUM_COLS; j++) {
       var $card = $("<div/>");
-      var $flipped_text = $("<span/>");
-      var $input = $("<input type='text' value='"+grid[i][j].word+"'/>");
-      var $checkbox = $("<input type='checkbox'/>");
-      flipped_texts_row.push($flipped_text);
-  
+      var $input = $("<input type='text' value='" + grid[i][j].word + "'/>");
+
       // Update model when input changes
-      $input.on("input", (function(i, j) {
-        return function() {
+      $input.on("input", (function (i, j) {
+        return function () {
           grid[i][j].word = $(this).val();
-          flipped_texts[i][j].text(grid[i][j].word);
-          console.log(grid[i][j].word);
         };
       })(i, j));
-  
-      // Update model when checkbox changes
-      $checkbox.on("change", (function(i, j) {
-        return function() {
-          grid[i][j].revealed = $(this).prop("checked");
+
+      // change the card background when the card is clicked
+      $card.on("tap", (function (i, j) {
+        return function () {
+          console.log(grid[i][j].owner);
+          if (!grid[i][j].revealed) {
+            // cylce through the owners and change the color
+            // yelllow --> red --> blue --> black --> yellow
+            if (grid[i][j].owner == 'yellow') {
+              grid[i][j].owner = 'red';
+              $(this).css("background-color", RED);
+            } else if (grid[i][j].owner == 'red') {
+              grid[i][j].owner = 'blue';
+              $(this).css("background-color", BLUE);
+            } else if (grid[i][j].owner == 'blue') {
+              grid[i][j].owner = 'black';
+              $(this).css("background-color", BLACK);
+            } else if (grid[i][j].owner == 'black') {
+              grid[i][j].owner = 'yellow';
+              $(this).css("background-color", YELLOW);
+            }
+          }
         };
       })(i, j));
-  
+
+      $card.on("press", (function (i, j) {
+        return function () {
+          if (!grid[i][j].revealed) {
+            $transparent = $("<div/>");
+            $transparent.addClass("transp");
+            // set the div's background color to the card's background color
+            $transparent.css("background-color", grid[i][j].card.css("background-color"));
+            // add some transparency to the div
+            $transparent.css("opacity", "0.85");
+            grid[i][j].revealed = true;
+            // hide the elements on the card
+            grid[i][j].card.append($transparent);
+          } else {
+            $transparent = grid[i][j].card.find(".transp");
+            // select the div with the class transp and remove it
+            grid[i][j].revealed = false;
+            // unhide the elements on the card
+            $transparent.remove();
+          }
+        };
+      })(i, j));
+
+
       // make a view with the input and checkbox side by side
-      $card_top = $("<div/>");
-      $card_top.append($flipped_text);
-      $card_top.append($checkbox);
-      $card_top.addClass("card-top");
-      $card.append($card_top, $input);
+      $card.append($input);
       $card.addClass("card");
-      $flipped_text.text(grid[i][j].word);
-      $flipped_text.addClass("flipped-text");
       $row.append($card);
+
+      // add the card to the grid
+      grid[i][j].card = $card;
     }
     $("#grid").append($row);
-    flipped_texts.push(flipped_texts_row);
   }
 
+
   // Handle Generate Clue button
-  $("#generateClue").on("click", function() {
+  $("#generateClue").on("click", function () {
     // Convert grid to JSON
     var gridJson = JSON.stringify(grid);
 
@@ -68,21 +112,21 @@ $( document ).ready(function() {
     $(this).prop("disabled", true);
     // change cursor to indicate that button is disabled
     $("#generateClue").css("cursor", "not-allowed");
-  
+
     // Make AJAX request
     $.ajax({
       url: "/projects/cluegen/generate",
       type: "POST",
       data: gridJson,
       contentType: "application/json",
-      success: function(data) {
+      success: function (data) {
         // Handle successful response
         console.log("Response:", data);
         $("#generateClue").css("opacity", "1");
         $("#generateClue").prop("disabled", false);
         $("#generateClue").css("cursor", "pointer");
       },
-      error: function(jqXHR, textStatus, errorThrown) {
+      error: function (jqXHR, textStatus, errorThrown) {
         // Handle error
         console.log("Error:", errorThrown);
         $("#generateClue").css("opacity", "1");
@@ -91,6 +135,6 @@ $( document ).ready(function() {
       }
     });
   });
-  
+
 });
 
