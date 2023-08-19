@@ -1,7 +1,11 @@
 const words = ["Actor", "Gold", "Painting", "Advertisement", "Grass", "Parrot", "Afternoon", "Greece", "Pencil", "Airport", "Guitar", "Piano", "Ambulance", "Hair", "Pillow", "Animal", "Hamburger", "Pizza", "Answer", "Helicopter", "Planet", "Apple", "Helmet", "Plastic", "Army", "Holiday", "Portugal", "Australia", "Honey", "Potato", "Balloon", "Horse", "Queen", "Banana", "Hospital", "Quill", "Battery", "House", "Rain", "Beach", "Hydrogen", "Rainbow", "Beard", "Ice", "Raincoat", "Bed", "Insect", "Refrigerator", "Belgium", "Insurance", "Restaurant", "Boy", "Iron", "River", "Branch", "Island", "Rocket", "Breakfast", "Jackal", "Room", "Brother", "Jelly", "Rose", "Camera", "Jewellery", "Russia", "Candle", "Jordan", "Sandwich", "Car", "Juice", "School", "Caravan", "Kangaroo", "Scooter", "Carpet", "King", "Shampoo", "Cartoon", "Kitchen", "Shoe", "China", "Kite", "Soccer", "Church", "Knife", "Spoon", "Crayon", "Lamp", "Stone", "Crowd", "Lawyer", "Sugar", "Daughter", "Leather", "Sweden", "Death", "Library", "Teacher", "Denmark", "Lighter", "Telephone", "Diamond", "Lion", "Television", "Dinner", "Lizard", "Tent", "Disease", "Lock", "Thailand", "Doctor", "London", "Tomato", "Dog", "Lunch", "Toothbrush", "Dream", "Machine", "Traffic", "Dress", "Magazine", "Train", "Easter", "Magician", "Truck", "Egg", "Manchester", "Uganda", "Eggplant", "Market", "Umbrella", "Egypt", "Match", "Van", "Elephant", "Microphone", "Vase", "Energy", "Monkey", "Vegetable", "Engine", "Morning", "Vulture", "England", "Motorcycle", "Wall", "Evening", "Nail", "Whale", "Eye", "Napkin", "Window", "Family", "Needle", "Wire", "Finland", "Nest", "Xylophone", "Fish", "Nigeria", "Yacht", "Flag", "Night", "Yak", "Flower", "Notebook", "Zebra", "Football", "Ocean", "Zoo", "Forest", "Oil", "Garden", "Fountain", "Orange", "Gas", "France", "Oxygen", "Girl", "Furniture", "Oyster", "Glass", "Garage", "Ghost"];
 
-// Initialize grid
+// model objects
 var grid = [];
+var player = 'red';
+
+// view objects
+var editable = false;
 
 // colors
 const YELLOW = "rgb(110, 103, 23)";
@@ -13,6 +17,9 @@ const NUM_ROWS = 5;
 const NUM_COLS = 5;
 
 $(document).ready(function () {
+  // change the player button's background color to the player's color
+  $("#cluegen-btn-player").css("background-color", RED);
+
   for (var i = 0; i < NUM_ROWS*NUM_COLS; i++) {
       const random = Math.floor(Math.random() * words.length);
       console.log(random, words[random]);
@@ -30,6 +37,9 @@ $(document).ready(function () {
     var $card = $("<div/>");
     var $input = $("<input type='text' value='" + grid[i].word + "'/>");
 
+    // default the input to uneditable
+    $input.prop("readonly", true);
+
     // Update model when input changes
     $input.on("input", (function (i) {
       return function () {
@@ -41,7 +51,7 @@ $(document).ready(function () {
     $card.on("tap", (function (i) {
       return function () {
         console.log(grid[i].owner);
-        if (!grid[i].revealed) {
+        if (!editable && !grid[i].revealed) {
           // cylce through the owners and change the color
           // yelllow --> red --> blue --> black --> yellow
           if (grid[i].owner == 'yellow') {
@@ -63,7 +73,7 @@ $(document).ready(function () {
 
     $card.on("press", (function (i) {
       return function () {
-        if (!grid[i].revealed) {
+        if (!editable && !grid[i].revealed) {
           $transparent = $("<div/>");
           $transparent.addClass("transp");
           // set the div's background color to the card's background color
@@ -95,39 +105,74 @@ $(document).ready(function () {
 
 
   // Handle Generate Clue button
-  $("#generateClue").on("click", function () {
+  $("#cluegen-btn-generate").on("click", function () {
+    // combine the grid and player into a single object and convert to JSON
+    var modelData = {
+      grid: grid,
+      player: player
+    };
+
     // Convert grid to JSON
-    var gridJson = JSON.stringify(grid);
+    var modelJson = JSON.stringify(modelData);
 
     // dim the button slighlty on click and undim after AJAX request
     $(this).css("opacity", "0.5");
     // disable button until AJAX request is complete
     $(this).prop("disabled", true);
     // change cursor to indicate that button is disabled
-    $("#generateClue").css("cursor", "not-allowed");
+    $("#cluegen-btn-generate").css("cursor", "not-allowed");
 
     // Make AJAX request
     $.ajax({
       url: "/projects/cluegen/generate",
       type: "POST",
-      data: gridJson,
+      data: modelJson,
       contentType: "application/json",
       success: function (data) {
         // Handle successful response
         console.log("Response:", data);
-        $("#generateClue").css("opacity", "1");
-        $("#generateClue").prop("disabled", false);
-        $("#generateClue").css("cursor", "pointer");
+        $("#cluegen-btn-generate").css("opacity", "1");
+        $("#cluegen-btn-generate").prop("disabled", false);
+        $("#cluegen-btn-generate").css("cursor", "pointer");
       },
       error: function (jqXHR, textStatus, errorThrown) {
         // Handle error
         console.log("Error:", errorThrown);
-        $("#generateClue").css("opacity", "1");
-        $("#generateClue").prop("disabled", false);
-        $("#generateClue").css("cursor", "pointer");
+        $("#cluegen-btn-generate").css("opacity", "1");
+        $("#cluegen-btn-generate").prop("disabled", false);
+        $("#cluegen-btn-generate").css("cursor", "pointer");
       }
     });
   });
 
-});
 
+  $("#cluegen-btn-player").on("click", function () {
+    console.log("player button clicked");
+    // toggle the owner variable
+    if (player == 'red') {
+      player = 'blue';
+      $("#cluegen-btn-player").css("background-color", BLUE);
+    }
+    else if (player == 'blue') {
+      player = 'red';
+      $("#cluegen-btn-player").css("background-color", RED);
+    }
+  });
+
+  $("#cluegen-btn-edit").on("click", function () {
+    // make the input editable
+    if (!editable) {
+      editable = true;
+      $(".card input").prop("readonly", false);
+      $("#cluegen-btn-edit").css("background-color", YELLOW);
+      $("#cluegen-btn-edit").html("Done");
+    }
+    else {
+      editable = false;
+      $(".card input").prop("readonly", true);
+      $("#cluegen-btn-edit").css("background-color", "rgb(45, 45, 45)");
+      $("#cluegen-btn-edit").html("Edit Text");
+    }
+  });
+
+});
