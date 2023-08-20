@@ -2,7 +2,7 @@ const words = ["Actor", "Gold", "Painting", "Advertisement", "Grass", "Parrot", 
 
 // model objects
 var grid = [];
-var player = 'red';
+var player = 'yellow';
 
 // view objects
 var editable = false;
@@ -17,9 +17,6 @@ const NUM_ROWS = 5;
 const NUM_COLS = 5;
 
 $(document).ready(function () {
-  // change the player button's background color to the player's color
-  $("#cluegen-btn-player").css("background-color", RED);
-
   for (var i = 0; i < NUM_ROWS*NUM_COLS; i++) {
       const random = Math.floor(Math.random() * words.length);
       console.log(random, words[random]);
@@ -106,14 +103,24 @@ $(document).ready(function () {
 
   // Handle Generate Clue button
   $("#cluegen-btn-generate").on("click", function () {
-    // combine the grid and player into a single object and convert to JSON
-    var modelData = {
-      grid: grid,
-      player: player
-    };
+    // go through the words in the grid
+    // filter out the words that are not revealed and not owned by the player
+    var words = grid.filter(function (word) {
+      return !word.revealed && word.owner == player;
+    });
+    words = words.map(function (word) {
+      return word.word;
+    });
+    // if there are no words, then return
+    if (words.length == 0) {
+      return;
+    }
+
+    // clear the clues div
+    $("#clues").empty();
 
     // Convert grid to JSON
-    var modelJson = JSON.stringify(modelData);
+    var wordsJson = JSON.stringify(words);
 
     // dim the button slighlty on click and undim after AJAX request
     $(this).css("opacity", "0.5");
@@ -126,14 +133,40 @@ $(document).ready(function () {
     $.ajax({
       url: "/projects/cluegen/generate",
       type: "POST",
-      data: modelJson,
+      data: wordsJson,
       contentType: "application/json",
       success: function (data) {
+        console.log("Success:", data);
         // Handle successful response
-        console.log("Response:", data);
         $("#cluegen-btn-generate").css("opacity", "1");
         $("#cluegen-btn-generate").prop("disabled", false);
         $("#cluegen-btn-generate").css("cursor", "pointer");
+
+        // for each clue/word list, create a new div and add it to the page
+        // for each clue/word list, create a new div and add it to the page
+        // for each clue/word list, create a new div and add it to the page
+        for (var i = 0; i < data.length; i++) {
+          var clue_str = data[i].clues.join(", ");
+          var $clue = $("<div/>");
+          var $wordList = $("<div/>");
+          var $clueText = $("<div/>");
+          $clue.addClass("clue-bubble");
+          $wordList.addClass("word-list");
+          $clueText.addClass("clue-text");
+          $clueText.html(clue_str);
+          $clue.append($clueText);
+          for (var j = 0; j < data[i].cluster.length; j++) {
+            var $word = $("<div/>");
+            $word.addClass("word");
+            $word.html(data[i].cluster[j]);
+            $wordList.append($word);
+          }
+
+          $clue.append($wordList);
+          $("#clues").append($clue);
+          $clue.fadeIn("slow");
+        }
+
       },
       error: function (jqXHR, textStatus, errorThrown) {
         // Handle error
@@ -149,11 +182,16 @@ $(document).ready(function () {
   $("#cluegen-btn-player").on("click", function () {
     console.log("player button clicked");
     // toggle the owner variable
+    // red --> blue --> yellow
     if (player == 'red') {
       player = 'blue';
       $("#cluegen-btn-player").css("background-color", BLUE);
     }
     else if (player == 'blue') {
+      player = 'yellow';
+      $("#cluegen-btn-player").css("background-color", YELLOW);
+    }
+    else if (player == 'yellow') {
       player = 'red';
       $("#cluegen-btn-player").css("background-color", RED);
     }
@@ -164,13 +202,13 @@ $(document).ready(function () {
     if (!editable) {
       editable = true;
       $(".card input").prop("readonly", false);
-      $("#cluegen-btn-edit").css("background-color", YELLOW);
+      $("#cluegen-btn-edit").css("background-color", RED);
       $("#cluegen-btn-edit").html("Done");
     }
     else {
       editable = false;
       $(".card input").prop("readonly", true);
-      $("#cluegen-btn-edit").css("background-color", "rgb(45, 45, 45)");
+      $("#cluegen-btn-edit").css("background-color", BLUE);
       $("#cluegen-btn-edit").html("Edit Text");
     }
   });
