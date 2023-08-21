@@ -1,4 +1,4 @@
-const words = ["Actor", "Gold", "Painting", "Advertisement", "Grass", "Parrot", "Afternoon", "Greece", "Pencil", "Airport", "Guitar", "Piano", "Ambulance", "Hair", "Pillow", "Animal", "Hamburger", "Pizza", "Answer", "Helicopter", "Planet", "Apple", "Helmet", "Plastic", "Army", "Holiday", "Portugal", "Australia", "Honey", "Potato", "Balloon", "Horse", "Queen", "Banana", "Hospital", "Quill", "Battery", "House", "Rain", "Beach", "Hydrogen", "Rainbow", "Beard", "Ice", "Raincoat", "Bed", "Insect", "Refrigerator", "Belgium", "Insurance", "Restaurant", "Boy", "Iron", "River", "Branch", "Island", "Rocket", "Breakfast", "Jackal", "Room", "Brother", "Jelly", "Rose", "Camera", "Jewellery", "Russia", "Candle", "Jordan", "Sandwich", "Car", "Juice", "School", "Caravan", "Kangaroo", "Scooter", "Carpet", "King", "Shampoo", "Cartoon", "Kitchen", "Shoe", "China", "Kite", "Soccer", "Church", "Knife", "Spoon", "Crayon", "Lamp", "Stone", "Crowd", "Lawyer", "Sugar", "Daughter", "Leather", "Sweden", "Death", "Library", "Teacher", "Denmark", "Lighter", "Telephone", "Diamond", "Lion", "Television", "Dinner", "Lizard", "Tent", "Disease", "Lock", "Thailand", "Doctor", "London", "Tomato", "Dog", "Lunch", "Toothbrush", "Dream", "Machine", "Traffic", "Dress", "Magazine", "Train", "Easter", "Magician", "Truck", "Egg", "Manchester", "Uganda", "Eggplant", "Market", "Umbrella", "Egypt", "Match", "Van", "Elephant", "Microphone", "Vase", "Energy", "Monkey", "Vegetable", "Engine", "Morning", "Vulture", "England", "Motorcycle", "Wall", "Evening", "Nail", "Whale", "Eye", "Napkin", "Window", "Family", "Needle", "Wire", "Finland", "Nest", "Xylophone", "Fish", "Nigeria", "Yacht", "Flag", "Night", "Yak", "Flower", "Notebook", "Zebra", "Football", "Ocean", "Zoo", "Forest", "Oil", "Garden", "Fountain", "Orange", "Gas", "France", "Oxygen", "Girl", "Furniture", "Oyster", "Glass", "Garage", "Ghost"];
+const words = ["actor", "gold", "painting", "advertisement", "grass", "parrot", "afternoon", "greece", "pencil", "airport", "guitar", "piano", "ambulance", "hair", "pillow", "animal", "hamburger", "pizza", "answer", "helicopter", "planet", "apple", "helmet", "plastic", "army", "holiday", "portugal", "australia", "honey", "potato", "balloon", "horse", "queen", "banana", "hospital", "quill", "battery", "house", "rain", "beach", "hydrogen", "rainbow", "beard", "ice", "raincoat", "bed", "insect", "refrigerator", "belgium", "insurance", "restaurant", "boy", "iron", "river", "branch", "island", "rocket", "breakfast", "jackal", "room", "brother", "jelly", "rose", "camera", "jewellery", "russia", "candle", "jordan", "sandwich", "car", "juice", "school", "caravan", "kangaroo", "scooter", "carpet", "king", "shampoo", "cartoon", "kitchen", "shoe", "china", "kite", "soccer", "church", "knife", "spoon", "crayon", "lamp", "stone", "crowd", "lawyer", "sugar", "daughter", "leather", "sweden", "death", "library", "teacher", "denmark", "lighter", "telephone", "diamond", "lion", "television", "dinner", "lizard", "tent", "disease", "lock", "thailand", "doctor", "london", "tomato", "dog", "lunch", "toothbrush", "dream", "machine", "traffic", "dress", "magazine", "train", "easter", "magician", "truck", "egg", "manchester", "uganda", "eggplant", "market", "umbrella", "egypt", "match", "van", "elephant", "microphone", "vase", "energy", "monkey", "vegetable", "engine", "morning", "vulture", "england", "motorcycle", "wall", "evening", "nail", "whale", "eye", "napkin", "window", "family", "needle", "wire", "finland", "nest", "xylophone", "fish", "nigeria", "yacht", "flag", "night", "yak", "flower", "notebook", "zebra", "football", "ocean", "zoo", "forest", "oil", "garden", "fountain", "orange", "gas", "france", "oxygen", "girl", "furniture", "oyster", "glass", "garage", "ghost"];
 
 // model objects
 var grid = [];
@@ -17,9 +17,12 @@ const NUM_ROWS = 5;
 const NUM_COLS = 5;
 
 $(document).ready(function () {
-  for (var i = 0; i < NUM_ROWS*NUM_COLS; i++) {
-      const random = Math.floor(Math.random() * words.length);
-      console.log(random, words[random]);
+  // get a random word from the list of words, without replacement
+  const randomIndexes = [];
+  while (randomIndexes.length < NUM_ROWS*NUM_COLS) {
+    const random = Math.floor(Math.random() * words.length);
+    if (!randomIndexes.includes(random)) {
+      randomIndexes.push(random);
       grid.push({
         word: words[random],
         owner: 'yellow', // default to yellow
@@ -27,6 +30,9 @@ $(document).ready(function () {
         card: null
       });
     }
+  }
+
+  console.log(grid);
 
   // Create grid elements
   for (var i = 0; i < NUM_ROWS*NUM_COLS; i++) {
@@ -44,6 +50,7 @@ $(document).ready(function () {
       };
     })(i));
 
+    // TODO: support click and right click as well
     // change the card background when the card is clicked
     $card.on("tap", (function (i) {
       return function () {
@@ -146,21 +153,17 @@ $(document).ready(function () {
         // for each clue/word list, create a new div and add it to the page
         // for each clue/word list, create a new div and add it to the page
         for (var i = 0; i < data.length; i++) {
-          var clue_str = data[i].clues.join(", ");
+          var cluster_str = data[i].cluster.join("  ");
+          var clue_str = data[i].clues.join("  ");
           var $clue = $("<div/>");
           var $wordList = $("<div/>");
           var $clueText = $("<div/>");
           $clue.addClass("clue-bubble");
           $wordList.addClass("word-list");
           $clueText.addClass("clue-text");
-          $clueText.html(clue_str);
+          $clueText.html(cluster_str);
           $clue.append($clueText);
-          for (var j = 0; j < data[i].cluster.length; j++) {
-            var $word = $("<div/>");
-            $word.addClass("word");
-            $word.html(data[i].cluster[j]);
-            $wordList.append($word);
-          }
+          $wordList.html(clue_str);
 
           $clue.append($wordList);
           $("#clues").append($clue);
