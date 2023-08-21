@@ -50,7 +50,6 @@ $(document).ready(function () {
       };
     })(i));
 
-    // TODO: support click and right click as well
     // change the card background when the card is clicked
     $card.on("tap", (function (i) {
       return function () {
@@ -155,6 +154,8 @@ $(document).ready(function () {
         for (var i = 0; i < data.length; i++) {
           var cluster_str = data[i].cluster.join("  ");
           var clue_str = data[i].clues.join("  ");
+          // add the number of words in the cluster to clue_str
+          clue_str += " (" + data[i].cluster.length + ")";
           var $clue = $("<div/>");
           var $wordList = $("<div/>");
           var $clueText = $("<div/>");

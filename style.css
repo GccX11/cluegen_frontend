@@ -3,10 +3,6 @@
   box-sizing: border-box;
 }
 
-body {
-  background-color: #f2f2f2;
-}
-
 
 /* Cluegen Bar */
 /* Style the horizontal bar */
@@ -14,7 +10,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f2f2f2;
   padding: 10px;
   margin-bottom: 10px;
 }
@@ -71,7 +66,6 @@ body {
   border-radius: 50px;
   padding: 20px;
   color: white;
-  font-size: 16px;
   min-width: 200px;
   text-align: center;
   transition: 0.3s;
@@ -79,26 +73,41 @@ body {
 
 /* Style the clue text */
 .clue-text {
-  font-size: 20px;
+  font-size: 3vw;
   font-weight: bold;
   margin-bottom: 10px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Style the word list */
 .word-list {
-  font-size: 16px;
+  font-size: 2vw;
+  color: #FFFFFF;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Responsive design */
-@media (max-width: 900px) {
+@media (min-width: 600px) {
   .clue-bubble {
-    flex-basis: 33%;
+    flex-basis: 33%-20px; /* to account for the left and right padding */
+  }
+  .clue-text {
+    font-size: 16px; /* max 16px */
+  }
+  .word-list {
+    font-size: 16px; /* max 16px */
   }
 }
 
-@media (max-width: 450px) {
+@media (max-width: 500px) {
   .clue-bubble {
     flex-basis: 100%;
+  }
+  .clue-text {
+    font-size: 5vw;
+  }
+  .word-list {
+    font-size: 5vw;
   }
 }
 
@@ -123,7 +132,6 @@ body {
   position: relative; /* necessary for the transparent div */
   background-color: rgb(110, 103, 23);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  border: 1px solid #ccc;
   border-radius: 5px;
   flex-grow: 1;
 }
@@ -149,10 +157,9 @@ body {
 #grid input[type='text'] {
   text-align: center;
   border-radius: 5px;
-  height: 20px;
   border: 1px solid #999999;
   color: #FFFFFF;
-  font-size: 3vw;
+  font-size: 2vw;
   width: 100%;
   text-align: center;
   border: none;
@@ -160,15 +167,15 @@ body {
   background-color: transparent;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 599px) {
   #grid input[type="text"] {
-    font-size: 16px;
+    font-size: 6vw;
   }
 }
 
-@media (min-width: 600px) {
+@media (min-width: 600px) and (max-width: 900px) {
   #grid input[type="text"] {
-    font-size: 20px;
+    font-size: 3vw;
   }
 }
 
