@@ -13,6 +13,8 @@ const RED = "rgb(167, 51, 31)";
 const BLUE = "rgb(31, 31, 167)";
 const BLACK = "rgb(40, 40, 40)";
 
+const SELECTED = "rgb(60, 90, 110)";
+
 const NUM_ROWS = 5;
 const NUM_COLS = 5;
 
@@ -212,9 +214,18 @@ $(document).ready(function () {
     else {
       editable = false;
       $(".card input").prop("readonly", true);
-      $("#cluegen-btn-edit").css("background-color", BLUE);
+      $("#cluegen-btn-edit").css("background-color", SELECTED);
       $("#cluegen-btn-edit").html("Edit Text");
     }
   });
+  
+  $("#how-to-use-link").on("click", function () {
+    var modal = $("#modal")[0];
+    modal.style.display = "block";x
+  });
 
+  $("#close").on("click", function () {
+    var modal = $("#modal")[0];
+    modal.style.display = "none";
+  });
 });
