@@ -34,8 +34,6 @@ $(document).ready(function () {
     }
   }
 
-  console.log(grid);
-
   // Create grid elements
   for (var i = 0; i < NUM_ROWS*NUM_COLS; i++) {
     var $row = $("<div/>");
@@ -55,7 +53,6 @@ $(document).ready(function () {
     // change the card background when the card is clicked
     $card.on("tap", (function (i) {
       return function () {
-        console.log(grid[i].owner);
         if (!editable && !grid[i].revealed) {
           // cylce through the owners and change the color
           // yelllow --> red --> blue --> black --> yellow
@@ -144,7 +141,7 @@ $(document).ready(function () {
       data: wordsJson,
       contentType: "application/json",
       success: function (data) {
-        console.log("Success:", data);
+        console.log("Success");
         // Handle successful response
         $("#cluegen-btn-generate").css("opacity", "1");
         $("#cluegen-btn-generate").prop("disabled", false);
@@ -186,7 +183,6 @@ $(document).ready(function () {
 
 
   $("#cluegen-btn-player").on("click", function () {
-    console.log("player button clicked");
     // toggle the owner variable
     // red --> blue --> yellow
     if (player == 'red') {
